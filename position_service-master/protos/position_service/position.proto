@@ -1,0 +1,75 @@
+syntax="proto3";
+
+package position_service;
+
+option go_package="genproto/position_service";
+
+// import "google/protobuf/empty.proto";
+
+service PositionService {
+    rpc GetAllPosition (GetAllPositionRequest) returns (GetAllPositionResponse);
+    rpc GetByIdPosition (PositionId) returns (Position);
+    rpc CreatePosition(CreatePositionRequest) returns (PositionId);
+    rpc UpdatePosition (UpdatePositionRequest) returns (PositionId);
+    rpc DeletePosition(PositionId) returns (PositionId);
+}
+
+message PositionId {
+    string id = 1;
+}
+message GetAllPositionResponse {
+    repeated Position positions = 5;
+    int32 count = 7;
+}
+
+message Position {
+    string id = 1;
+    string name = 2;
+    string profession_id = 3;
+    string company_id = 4;
+    repeated GetPositionAttributes position_attributes =5;
+    int32 count = 6;
+}
+
+message GetAllPositionRequest {
+    int32 limit = 1;
+    int32 offset = 2;
+    string search = 3;
+}
+
+message GetPositionAttributes {
+    string id = 1;
+    string value = 2;
+    string attribute_id = 3;
+    string position_id = 4;
+    string attribute_name = 5;
+    string attribute_type = 6;
+
+}
+
+
+message PositionAttributesWithId {
+    string id = 1;
+    string attribute_id = 2;
+    string value = 3;
+}
+
+message PositionAttributes {
+    string attribute_id = 2;
+    string value = 3;
+}
+
+message CreatePositionRequest {
+    string name = 1;
+    string profession_id = 2;
+    string company_id = 3;
+    repeated PositionAttributes position_attributes = 4;
+}
+
+message UpdatePositionRequest {
+    string id = 1;
+    string name = 2;
+    string profession_id = 3;
+    string company_id = 4;
+    repeated PositionAttributesWithId position_attributes_with_id = 5;
+}

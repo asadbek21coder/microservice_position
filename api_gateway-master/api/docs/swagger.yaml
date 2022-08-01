@@ -1,0 +1,1013 @@
+definitions:
+  company_service.Company:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  company_service.CreateCompanyRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  company_service.GetAllCompanyRequest:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+      search:
+        type: string
+    type: object
+  company_service.Id:
+    properties:
+      id:
+        type: string
+    type: object
+  config.Config:
+    properties:
+      environment:
+        description: develop, staging, production
+        type: string
+      httpPort:
+        type: string
+      logLevel:
+        type: string
+      positionServiceHost:
+        type: string
+      positionServicePort:
+        type: integer
+    type: object
+  models.ResponseModel:
+    properties:
+      code:
+        type: integer
+      data:
+        type: object
+      error:
+        type: object
+      message:
+        type: string
+    type: object
+  position_service.Attribute:
+    properties:
+      attribute_type:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  position_service.AttributeId:
+    properties:
+      id:
+        type: string
+    type: object
+  position_service.CreateAttributeRequest:
+    properties:
+      attribute_type:
+        type: string
+      name:
+        type: string
+    type: object
+  position_service.CreatePositionRequest:
+    properties:
+      company_id:
+        type: string
+      name:
+        type: string
+      position_attributes:
+        items:
+          $ref: '#/definitions/position_service.PositionAttributes'
+        type: array
+      profession_id:
+        type: string
+    type: object
+  position_service.CreateProfessionRequest:
+    properties:
+      name:
+        type: string
+    type: object
+  position_service.GetAllAttributeResponse:
+    properties:
+      attributes:
+        items:
+          $ref: '#/definitions/position_service.Attribute'
+        type: array
+      count:
+        type: integer
+    type: object
+  position_service.GetAllProfessionResponse:
+    properties:
+      count:
+        type: integer
+      professions:
+        items:
+          $ref: '#/definitions/position_service.Profession'
+        type: array
+    type: object
+  position_service.GetPositionAttributes:
+    properties:
+      attribute_id:
+        type: string
+      attribute_name:
+        type: string
+      attribute_type:
+        type: string
+      id:
+        type: string
+      position_id:
+        type: string
+      value:
+        type: string
+    type: object
+  position_service.Id:
+    properties:
+      id:
+        type: string
+    type: object
+  position_service.Position:
+    properties:
+      company_id:
+        type: string
+      count:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      position_attributes:
+        items:
+          $ref: '#/definitions/position_service.GetPositionAttributes'
+        type: array
+      profession_id:
+        type: string
+    type: object
+  position_service.PositionAttributes:
+    properties:
+      attribute_id:
+        type: string
+      value:
+        type: string
+    type: object
+  position_service.PositionAttributesWithId:
+    properties:
+      attribute_id:
+        type: string
+      id:
+        type: string
+      value:
+        type: string
+    type: object
+  position_service.PositionId:
+    properties:
+      id:
+        type: string
+    type: object
+  position_service.Profession:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  position_service.UpdatePositionRequest:
+    properties:
+      company_id:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      position_attributes_with_id:
+        items:
+          $ref: '#/definitions/position_service.PositionAttributesWithId'
+        type: array
+      profession_id:
+        type: string
+    type: object
+info:
+  contact: {}
+  license: {}
+paths:
+  /config:
+    get:
+      consumes:
+      - application/json
+      description: shows config of the project only on the development phase
+      operationId: get-config
+      parameters:
+      - description: name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/config.Config'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: gets project config
+      tags:
+      - config
+  /v1/attribute:
+    delete:
+      consumes:
+      - application/json
+      description: delete attribute
+      operationId: delete-attribute
+      parameters:
+      - description: attribute
+        in: body
+        name: attribute
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.AttributeId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.AttributeId'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: delete attribute
+      tags:
+      - attribute
+    get:
+      consumes:
+      - application/json
+      description: get attribute
+      operationId: get-attribute
+      parameters:
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.GetAllAttributeResponse'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: get attribute
+      tags:
+      - attribute
+    post:
+      consumes:
+      - application/json
+      description: create attribute
+      operationId: create-attribute
+      parameters:
+      - description: attribute
+        in: body
+        name: attribute
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.CreateAttributeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Attribute'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: create attribute
+      tags:
+      - attribute
+    put:
+      consumes:
+      - application/json
+      description: update attribute
+      operationId: update-attribute
+      parameters:
+      - description: attribute
+        in: body
+        name: Attribute
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.Attribute'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Attribute'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: update attribute
+      tags:
+      - attribute
+  /v1/attribute/{id}:
+    get:
+      consumes:
+      - application/json
+      description: GetById attribute
+      operationId: getbyid-attribute
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Attribute'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: getById attribute
+      tags:
+      - attribute
+  /v1/company:
+    delete:
+      consumes:
+      - application/json
+      description: delete company
+      operationId: delete-company
+      parameters:
+      - description: company
+        in: body
+        name: company
+        required: true
+        schema:
+          $ref: '#/definitions/company_service.Id'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/company_service.Id'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: delete company
+      tags:
+      - company
+    get:
+      consumes:
+      - application/json
+      description: get company
+      operationId: get-company
+      parameters:
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/company_service.GetAllCompanyRequest'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: get company
+      tags:
+      - company
+    post:
+      consumes:
+      - application/json
+      description: create company
+      operationId: create-company
+      parameters:
+      - description: company
+        in: body
+        name: company
+        required: true
+        schema:
+          $ref: '#/definitions/company_service.CreateCompanyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/company_service.Company'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: create company
+      tags:
+      - company
+    put:
+      consumes:
+      - application/json
+      description: update company
+      operationId: update-company
+      parameters:
+      - description: company
+        in: body
+        name: company
+        required: true
+        schema:
+          $ref: '#/definitions/company_service.Company'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/company_service.Company'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: update company
+      tags:
+      - company
+  /v1/company/{id}:
+    get:
+      consumes:
+      - application/json
+      description: GetById company
+      operationId: getById-company
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/company_service.Company'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: getById company
+      tags:
+      - company
+  /v1/ping:
+    get:
+      consumes:
+      - application/json
+      description: this returns "pong" messsage to show service is working
+      operationId: ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: returns "pong" message
+      tags:
+      - config
+  /v1/position:
+    delete:
+      consumes:
+      - application/json
+      description: delete position
+      operationId: delete-position
+      parameters:
+      - description: position
+        in: body
+        name: position
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.PositionId'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.PositionId'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: delete position
+      tags:
+      - position
+    get:
+      consumes:
+      - application/json
+      description: get position
+      operationId: get-position
+      parameters:
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.GetAllProfessionResponse'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: get position
+      tags:
+      - position
+    post:
+      consumes:
+      - application/json
+      description: create position
+      operationId: create-position
+      parameters:
+      - description: position
+        in: body
+        name: position
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.CreatePositionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.PositionId'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: create position
+      tags:
+      - position
+    put:
+      consumes:
+      - application/json
+      description: update position
+      operationId: update-position
+      parameters:
+      - description: position
+        in: body
+        name: position
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.UpdatePositionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.PositionId'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: update position
+      tags:
+      - position
+  /v1/position/{id}:
+    get:
+      consumes:
+      - application/json
+      description: GetById position
+      operationId: getbyid-position
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Position'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: getById position
+      tags:
+      - position
+  /v1/profession:
+    delete:
+      consumes:
+      - application/json
+      description: delete profession
+      operationId: delete-profession
+      parameters:
+      - description: profession
+        in: body
+        name: profession
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.Id'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Id'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: delete profession
+      tags:
+      - profession
+    get:
+      consumes:
+      - application/json
+      description: get profession
+      operationId: get-profession
+      parameters:
+      - description: search
+        in: query
+        name: search
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.GetAllProfessionResponse'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: get profession
+      tags:
+      - profession
+    post:
+      consumes:
+      - application/json
+      description: create profession
+      operationId: create-profession
+      parameters:
+      - description: profession
+        in: body
+        name: profession
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.CreateProfessionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Profession'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: create profession
+      tags:
+      - profession
+    put:
+      consumes:
+      - application/json
+      description: update profession
+      operationId: update-profession
+      parameters:
+      - description: profession
+        in: body
+        name: profession
+        required: true
+        schema:
+          $ref: '#/definitions/position_service.Profession'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Profession'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: update profession
+      tags:
+      - profession
+  /v1/profession/{id}:
+    get:
+      consumes:
+      - application/json
+      description: GetById profession
+      operationId: getbyid-profession
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                data:
+                  $ref: '#/definitions/position_service.Profession'
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.ResponseModel'
+            - properties:
+                error:
+                  type: string
+              type: object
+      summary: getById profession
+      tags:
+      - profession
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
